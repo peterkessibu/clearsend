@@ -3,18 +3,17 @@ import { getCurrentUser } from "@/lib/auth";
 import { listTransfersForUser } from "@/lib/transfers";
 import { formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { WalletPanel } from "@/components/dashboard/WalletPanel";
 import { getCorridor } from "@/lib/corridors";
+import { emptyBalances, getBalancesForUser } from "@/lib/wallet";
 import type { CorridorId, Currency } from "@/types";
 
 export default async function DashboardOverviewPage() {
   const user = await getCurrentUser();
   const transfers = user ? await listTransfersForUser(user.id, 5) : [];
-
-  const balances: { currency: Currency; amount: number; note: string }[] = [
-    { currency: "NGN", amount: 1_250_000, note: "Nigeria" },
-    { currency: "GHS", amount: 8_500, note: "Ghana" },
-    { currency: "XOF", amount: 750_000, note: "CFA / WAEMU" },
-  ];
+  const balances = user
+    ? await getBalancesForUser(user.id)
+    : emptyBalances();
 
   const firstName = user?.name?.split(/\s+/)[0];
 
@@ -30,8 +29,9 @@ export default async function DashboardOverviewPage() {
               Welcome{firstName ? `, ${firstName}` : ""}
             </h1>
             <p className="mt-2 text-sm leading-relaxed text-teal-50/90">
-              All-in FX clarity for West Africa corridors. Balances below are
-              display estimates — ClearSend does not hold funds.
+              All-in FX clarity for West Africa corridors. Balances start at
+              zero — use Load wallet for a sandbox top-up, then Exchange or
+              Send. ClearSend does not hold funds as a licensed MTO.
             </p>
           </div>
           <Link
@@ -44,39 +44,7 @@ export default async function DashboardOverviewPage() {
         </div>
       </section>
 
-      <section>
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <h2 className="text-sm font-semibold text-slate-800">
-            Corridor balances
-          </h2>
-          <span className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 ring-1 ring-slate-200">
-            No custody
-          </span>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {balances.map((b) => (
-            <div
-              key={b.currency}
-              className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm shadow-slate-900/5"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">
-                  {b.currency}
-                </span>
-                <span className="text-[11px] font-medium text-slate-400">
-                  {b.note}
-                </span>
-              </div>
-              <div className="mt-2 text-xl font-bold tracking-tight text-slate-900">
-                {formatMoney(b.amount, b.currency)}
-              </div>
-              <div className="mt-2 text-[11px] leading-snug text-slate-500">
-                Display only — ClearSend does not hold funds
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <WalletPanel initialBalances={balances} />
 
       <section>
         <div className="mb-3 flex items-center justify-between gap-3">
