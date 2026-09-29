@@ -87,19 +87,24 @@ export default function SendMoneyPage() {
     }
   }
 
+  const fieldClass =
+    "mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/25";
+
   return (
     <div className="mx-auto max-w-lg space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-700">
+          New transfer
+        </p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
           Send money
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="mt-1.5 text-sm text-slate-600">
           West Africa corridors · estimated all-in quote · MoMo payout
         </p>
       </div>
 
-      {/* Steps indicator */}
-      <ol className="flex gap-2 text-xs font-semibold">
+      <ol className="flex gap-2 text-xs font-semibold" aria-label="Send steps">
         {(
           [
             ["details", "1. Details"],
@@ -109,10 +114,11 @@ export default function SendMoneyPage() {
         ).map(([key, label]) => (
           <li
             key={key}
-            className={`flex-1 rounded-full px-2 py-1.5 text-center ${
+            aria-current={step === key ? "step" : undefined}
+            className={`flex-1 rounded-full px-2 py-2 text-center transition ${
               step === key
-                ? "bg-teal-700 text-white"
-                : "bg-slate-100 text-slate-500"
+                ? "bg-teal-700 text-white shadow-sm shadow-teal-700/25"
+                : "bg-white text-slate-500 ring-1 ring-slate-200"
             }`}
           >
             {label}
@@ -123,16 +129,20 @@ export default function SendMoneyPage() {
       {step === "details" && (
         <form
           onSubmit={goReview}
-          className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+          className="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/5 sm:p-6"
         >
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label
+              htmlFor="corridor"
+              className="block text-sm font-medium text-slate-700"
+            >
               Corridor
             </label>
             <select
+              id="corridor"
               value={corridorId}
               onChange={(e) => onCorridorChange(e.target.value as CorridorId)}
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none ring-teal-600/30 focus:ring-2"
+              className={fieldClass}
             >
               {CORRIDORS.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -143,62 +153,74 @@ export default function SendMoneyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label
+              htmlFor="amount"
+              className="block text-sm font-medium text-slate-700"
+            >
               Amount ({CURRENCY_META[corridor.from].symbol.trim()})
             </label>
             <input
+              id="amount"
               type="number"
               min={1}
               step="any"
               required
               value={amountIn}
               onChange={(e) => setAmountIn(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none ring-teal-600/30 focus:ring-2"
+              className={fieldClass}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label
+              htmlFor="recipientName"
+              className="block text-sm font-medium text-slate-700"
+            >
               Recipient name
             </label>
             <input
+              id="recipientName"
               type="text"
               required
               minLength={2}
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
               placeholder="Ama Mensah"
-              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none ring-teal-600/30 focus:ring-2"
+              className={fieldClass}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label
+              htmlFor="msisdn"
+              className="block text-sm font-medium text-slate-700"
+            >
               MoMo MSISDN
             </label>
             <input
+              id="msisdn"
               type="tel"
               required
               value={recipientMsisdn}
               onChange={(e) => setRecipientMsisdn(e.target.value)}
               placeholder="+233241234567"
-              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none ring-teal-600/30 focus:ring-2"
+              className={fieldClass}
             />
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1.5 text-xs text-slate-500">
               Phone number for MoMo receive (8–15 digits)
             </p>
           </div>
 
           {path && quote && (
-            <div className="rounded-xl bg-teal-50 px-3 py-3 text-sm text-teal-900">
+            <div className="rounded-2xl border border-teal-200/70 bg-gradient-to-br from-teal-50 to-emerald-50/60 px-4 py-3.5 text-sm text-teal-950">
               <div className="font-semibold">Estimated all-in quote</div>
-              <div className="mt-1">
+              <div className="mt-1.5">
                 Recipient gets{" "}
                 <span className="font-bold">
                   {formatMoney(path.amountOut, quote.currencyOut)}
                 </span>
               </div>
-              <div className="mt-0.5 text-xs text-teal-800/80">
+              <div className="mt-1 text-xs text-teal-800/80">
                 Fee {formatMoney(path.fee, quote.currencyIn)} ·{" "}
                 {formatRate(path.fxRate, quote.currencyIn, quote.currencyOut)}
               </div>
@@ -206,14 +228,17 @@ export default function SendMoneyPage() {
           )}
 
           {error && (
-            <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            <p
+              role="alert"
+              className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700 ring-1 ring-rose-100"
+            >
               {error}
             </p>
           )}
 
           <button
             type="submit"
-            className="w-full rounded-full bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-800"
+            className="w-full rounded-full bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-teal-700/20 transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
           >
             Review quote
           </button>
@@ -221,57 +246,64 @@ export default function SendMoneyPage() {
       )}
 
       {step === "review" && path && quote && (
-        <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-900">Review all-in quote</h2>
-          <dl className="space-y-2 text-sm">
-            <div className="flex justify-between">
+        <div className="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/5 sm:p-6">
+          <h2 className="text-lg font-bold text-slate-900">
+            Review all-in quote
+          </h2>
+          <dl className="space-y-2.5 text-sm">
+            <div className="flex justify-between gap-3">
               <dt className="text-slate-500">Corridor</dt>
-              <dd className="font-medium">{corridor.label}</dd>
+              <dd className="font-medium text-slate-900">{corridor.label}</dd>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-3">
               <dt className="text-slate-500">You send</dt>
-              <dd className="font-semibold">
+              <dd className="font-semibold text-slate-900">
                 {formatMoney(Number(amountIn), quote.currencyIn)}
               </dd>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-3">
               <dt className="text-slate-500">Fee</dt>
-              <dd>{formatMoney(path.fee, quote.currencyIn)}</dd>
+              <dd className="text-slate-800">
+                {formatMoney(path.fee, quote.currencyIn)}
+              </dd>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-3">
               <dt className="text-slate-500">FX</dt>
-              <dd>
+              <dd className="text-slate-800">
                 {formatRate(path.fxRate, quote.currencyIn, quote.currencyOut)}
               </dd>
             </div>
-            <div className="flex justify-between border-t border-slate-100 pt-2">
+            <div className="flex justify-between gap-3 border-t border-slate-100 pt-2.5">
               <dt className="text-slate-500">Recipient gets</dt>
               <dd className="text-base font-bold text-teal-800">
                 {formatMoney(path.amountOut, quote.currencyOut)}
               </dd>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-3">
               <dt className="text-slate-500">To</dt>
-              <dd className="text-right font-medium">
+              <dd className="text-right font-medium text-slate-900">
                 {recipientName}
                 <div className="text-xs font-normal text-slate-500">
                   {recipientMsisdn}
                 </div>
               </dd>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-3">
               <dt className="text-slate-500">Path</dt>
-              <dd className="font-medium">{path.provider}</dd>
+              <dd className="font-medium text-slate-800">{path.provider}</dd>
             </div>
           </dl>
 
-          <p className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
+          <p className="rounded-xl bg-slate-50 px-3.5 py-2.5 text-xs leading-relaxed text-slate-700 ring-1 ring-slate-100">
             Confirming creates a pending transfer and requests a MoMo payout
             through ClearSend. ClearSend does not hold funds.
           </p>
 
           {error && (
-            <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            <p
+              role="alert"
+              className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700 ring-1 ring-rose-100"
+            >
               {error}
             </p>
           )}
@@ -280,14 +312,14 @@ export default function SendMoneyPage() {
             <button
               type="button"
               onClick={() => setStep("details")}
-              className="flex-1 rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
             >
               Back
             </button>
             <button
               type="button"
               onClick={confirmSend}
-              className="flex-1 rounded-full bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-800"
+              className="flex-1 rounded-full bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-teal-700/20 transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
             >
               Confirm send
             </button>
@@ -296,12 +328,18 @@ export default function SendMoneyPage() {
       )}
 
       {step === "sending" && (
-        <div className="rounded-2xl border border-slate-200 bg-white px-5 py-12 text-center shadow-sm">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-teal-200 border-t-teal-700" />
+        <div className="rounded-2xl border border-slate-200/80 bg-white px-5 py-12 text-center shadow-sm shadow-slate-900/5">
+          <div
+            className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-teal-200 border-t-teal-700"
+            role="status"
+            aria-label="Sending"
+          />
           <p className="mt-4 text-sm font-medium text-slate-700">
             Creating transfer &amp; calling MoMo client…
           </p>
-          <p className="mt-1 text-xs text-slate-500">Payout may take a moment to confirm</p>
+          <p className="mt-1 text-xs text-slate-500">
+            Payout may take a moment to confirm
+          </p>
         </div>
       )}
     </div>

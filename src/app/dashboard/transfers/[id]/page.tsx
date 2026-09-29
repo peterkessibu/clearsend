@@ -30,15 +30,20 @@ export default async function TransferReceiptPage({
     <div className="mx-auto max-w-lg space-y-6">
       <Link
         href="/dashboard/transfers"
-        className="text-sm font-semibold text-teal-700 hover:underline"
+        className="inline-flex items-center gap-1 text-sm font-semibold text-teal-700 transition hover:text-teal-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 rounded"
       >
-        ← Transfers
+        <span aria-hidden>←</span> Transfers
       </Link>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Receipt</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-700">
+              Receipt
+            </p>
+            <h1 className="mt-1 text-xl font-bold text-slate-900">
+              Transfer details
+            </h1>
             <p className="mt-1 text-xs text-slate-500">
               {formatQuoteTimestamp(transfer.createdAt.toISOString())}
             </p>
@@ -76,7 +81,10 @@ export default async function TransferReceiptPage({
           <div className="flex justify-between gap-4 border-t border-slate-100 pt-3">
             <dt className="text-slate-500">Recipient gets</dt>
             <dd className="text-lg font-bold text-teal-800">
-              {formatMoney(transfer.amountOut, transfer.currencyOut as Currency)}
+              {formatMoney(
+                transfer.amountOut,
+                transfer.currencyOut as Currency
+              )}
             </dd>
           </div>
           <div className="flex justify-between gap-4">
@@ -101,13 +109,16 @@ export default async function TransferReceiptPage({
             </div>
           )}
           {transfer.errorMessage && (
-            <div className="rounded-lg bg-rose-50 px-3 py-2 text-rose-800">
+            <div
+              role="alert"
+              className="rounded-xl bg-rose-50 px-3 py-2 text-rose-800 ring-1 ring-rose-100"
+            >
               {transfer.errorMessage}
             </div>
           )}
         </dl>
 
-        <p className="mt-6 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
+        <p className="mt-6 rounded-xl bg-slate-50 px-3.5 py-2.5 text-xs leading-relaxed text-slate-700 ring-1 ring-slate-100">
           MoMo payout handled by ClearSend. ClearSend does not hold funds.
         </p>
       </div>
@@ -115,15 +126,15 @@ export default async function TransferReceiptPage({
       <div className="flex gap-3">
         <Link
           href="/dashboard/send"
-          className="flex-1 rounded-full bg-teal-700 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-teal-800"
+          className="flex-1 rounded-full bg-teal-700 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm shadow-teal-700/20 transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
         >
           Send again
         </Link>
         <Link
           href="/dashboard"
-          className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
         >
-          Dashboard
+          Home
         </Link>
       </div>
     </div>
