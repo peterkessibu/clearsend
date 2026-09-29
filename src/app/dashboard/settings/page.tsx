@@ -1,8 +1,8 @@
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { hasMomoKeys } from "@/lib/momo";
 
 export default async function SettingsPage() {
-  const session = await auth();
+  const user = await getCurrentUser();
   const momoConfigured = hasMomoKeys();
 
   return (
@@ -22,7 +22,7 @@ export default async function SettingsPage() {
             Name
           </div>
           <div className="mt-1 text-sm font-medium text-slate-900">
-            {session?.user?.name}
+{user?.name}
           </div>
         </div>
         <div>
@@ -30,7 +30,7 @@ export default async function SettingsPage() {
             Email
           </div>
           <div className="mt-1 text-sm font-medium text-slate-900">
-            {session?.user?.email}
+{user?.email}
           </div>
         </div>
         <div>

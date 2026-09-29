@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { listTransfersForUser } from "@/lib/transfers";
 import { formatMoney, formatDemoTimestamp } from "@/lib/format";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
@@ -7,9 +7,9 @@ import { getCorridor } from "@/lib/corridors";
 import type { CorridorId, Currency } from "@/types";
 
 export default async function TransfersPage() {
-  const session = await auth();
-  const transfers = session?.user?.id
-    ? await listTransfersForUser(session.user.id, 100)
+  const user = await getCurrentUser();
+  const transfers = user
+    ? await listTransfersForUser(user.id, 100)
     : [];
 
   return (

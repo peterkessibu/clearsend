@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { listTransfersForUser } from "@/lib/transfers";
 import { formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
@@ -7,9 +7,9 @@ import { getCorridor } from "@/lib/corridors";
 import type { CorridorId, Currency } from "@/types";
 
 export default async function DashboardOverviewPage() {
-  const session = await auth();
-  const transfers = session?.user?.id
-    ? await listTransfersForUser(session.user.id, 5)
+  const user = await getCurrentUser();
+  const transfers = user
+    ? await listTransfersForUser(user.id, 5)
     : [];
 
   const demoBalances: { currency: Currency; amount: number }[] = [
@@ -26,7 +26,7 @@ export default async function DashboardOverviewPage() {
             Overview
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Welcome{session?.user?.name ? `, ${session.user.name}` : ""}. Sandbox
+            Welcome{user?.name ? `, ${user.name}` : ""}. Sandbox
             balances below are illustrative DEMO labels only.
           </p>
         </div>

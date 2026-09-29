@@ -7,7 +7,7 @@
 ## What it shows
 
 1. **Landing** — problem / solution framing + Login / Get started  
-2. **Auth** — email/password signup & login (Auth.js Credentials + Prisma)  
+2. **Auth** — email/password signup & login via **Supabase Auth**  
 3. **Dashboard** — DEMO balances, recent transfers, Send / Transfers / Settings  
 4. **Send flow** — corridor picker → amount + MoMo MSISDN → all-in quote review → confirm → receipt  
 5. **MoMo layer** — Collection + Disbursement interfaces with mock + real hook points  
@@ -24,34 +24,34 @@
 ## Stack
 
 - Next.js 15 (App Router) + TypeScript + Tailwind CSS v4  
-- Auth.js (`next-auth` v5) Credentials provider  
-- Prisma + **SQLite** locally (use **Postgres** on Vercel/production)  
-- MTN MoMo client stubs under `src/lib/momo/`
+- **Supabase Auth** + **Supabase Postgres** (`profiles`, `transfers` with RLS)  
+- `@supabase/ssr` cookie session refresh via middleware  
+- MTN MoMo client stubs under `src/lib/momo/`  
+- Node.js **22+** recommended (`@supabase/supabase-js` engine requirement)
 
 ## Run locally
 
 ```bash
 cp .env.example .env
-# Ensure AUTH_SECRET and DATABASE_URL are set (defaults in .env.example work for local)
+# Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 npm install
-npx prisma db push
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-1. **Get started** → create an account  
+1. **Get started** → create an account (profile row is created by a Supabase trigger from `user_metadata.name`)  
 2. Open **Send** → pick a corridor, amount, recipient MSISDN (e.g. `+233241234567`)  
 3. Confirm → see receipt with status `sandbox_completed`  
 4. Check **Transfers** and **Overview**
+
+If **Confirm email** is enabled in Supabase Auth, signup will ask you to confirm before a session is issued. For a frictionless local demo, turn off **Confirm email** under Authentication → Providers → Email.
 
 ### Production build
 
 ```bash
 npm install
-npx prisma generate
-npx prisma db push   # or migrate for Postgres
 npm run build
 npm start
 ```
@@ -62,9 +62,8 @@ See **`.env.example`** for the full list.
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `DATABASE_URL` | Yes | `file:./dev.db` locally; Postgres URL in production |
-| `AUTH_SECRET` | Yes | Auth.js session secret (`openssl rand -base64 32`) |
-| `NEXTAUTH_URL` / `AUTH_URL` | Prod | Canonical app URL |
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon / publishable key (RLS-enforced) |
 | `MOMO_API_USER` | MoMo | API user UUID from MoMo Developer portal |
 | `MOMO_API_KEY` | MoMo | API key for that user |
 | `MOMO_SUBSCRIPTION_KEY` | MoMo | Primary subscription key (Collection/Disbursement product) |
@@ -74,13 +73,29 @@ See **`.env.example`** for the full list.
 
 If MoMo keys are **missing**, `getMomoClient()` returns **SandboxMockProvider**.
 
+`AUTH_SECRET` / `DATABASE_URL` / Prisma are **no longer used**.
+
+### Vercel
+
+Set these project env vars (Production + Preview as needed):
+
+- `NEXT_PUBLIC_SUPABASE_URL` = `https://drdxmfshvjpaurocwfgy.supabase.co` (or your project URL)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` = your anon key
+
+In **Supabase → Authentication → URL configuration**:
+
+| Setting | Values |
+|---------|--------|
+| **Site URL** | `https://clearsend-eight.vercel.app` |
+| **Redirect URLs** | `https://clearsend-eight.vercel.app/**`, `https://clearsend-eight.vercel.app/auth/callback`, `http://localhost:3000/**`, `http://localhost:3000/auth/callback` |
+
 ## Auth
 
-- **Provider:** Auth.js Credentials (email + bcrypt password hash).  
-- **Pages:** `/login`, `/signup`; `/dashboard/*` protected by middleware.  
-- **Storage:** Prisma `User` model.  
-- **Local:** SQLite (`prisma/dev.db`).  
-- **Production (Vercel):** switch `provider` in `prisma/schema.prisma` to `postgresql`, set `DATABASE_URL` to a free Neon/Supabase/Vercel Postgres URL, then `prisma db push` or migrate. SQLite file DBs are not durable on serverless.
+- **Provider:** Supabase Auth email + password (`signUp` / `signInWithPassword` / `signOut`).  
+- **Pages:** `/login`, `/signup`; `/dashboard/*` protected by middleware session refresh.  
+- **Callback:** `/auth/callback` exchanges the email-confirm / PKCE code for a session.  
+- **Storage:** `auth.users` + `public.profiles` (trigger on signup copies `name` from metadata).  
+- **Data:** `public.transfers` queried with the user session (RLS).  
 
 ## Sandbox vs live MoMo
 
@@ -113,12 +128,10 @@ src/
     quotes.ts          # DEMO quote engine
     corridors.ts
     momo/              # MoMo Collection + Disbursement clients
-    transfers.ts       # Create/execute transfer records
-    db.ts              # Prisma client
-  auth.ts              # Auth.js config
-  middleware.ts        # Protect /dashboard/*
-prisma/
-  schema.prisma
+    transfers.ts       # Create/execute transfer records (Supabase)
+    auth.ts            # Current user helper
+    supabase/          # Browser + server + middleware clients
+  middleware.ts        # Protect /dashboard/* + refresh session
 ```
 
 ## Product notes for pitches

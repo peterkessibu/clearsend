@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { getTransferForUser } from "@/lib/transfers";
 import { formatMoney, formatDemoTimestamp, formatRate } from "@/lib/format";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
@@ -12,11 +12,11 @@ export default async function TransferReceiptPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
 
   const { id } = await params;
-  const transfer = await getTransferForUser(session.user.id, id);
+  const transfer = await getTransferForUser(user.id, id);
   if (!transfer) notFound();
 
   let corridorLabel = transfer.corridorId;

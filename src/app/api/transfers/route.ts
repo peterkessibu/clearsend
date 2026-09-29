@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { CORRIDORS } from "@/lib/corridors";
 import {
   createAndExecuteTransfer,
@@ -8,17 +8,17 @@ import {
 import type { CorridorId } from "@/types";
 
 export async function GET() {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const user = await getCurrentUser();
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const transfers = await listTransfersForUser(session.user.id);
+  const transfers = await listTransfersForUser(user.id);
   return NextResponse.json({ transfers });
 }
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const user = await getCurrentUser();
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     }
 
     const transfer = await createAndExecuteTransfer({
-      userId: session.user.id,
+      userId: user.id,
       corridorId,
       amountIn,
       recipientName,
