@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { createClient } from "@/lib/supabase/server";
 import { generateQuotes } from "@/lib/quotes";
-import { getMomoClient, hasMomoKeys } from "@/lib/momo";
+import { getMomoClient, isMomoProduction } from "@/lib/momo";
 import type { TransferRow } from "@/lib/database.types";
 import type { CorridorId } from "@/types";
 
@@ -91,7 +91,7 @@ export async function createAndExecuteTransfer(
       recipient_name: input.recipientName.trim(),
       recipient_msisdn: input.recipientMsisdn.trim().replace(/\s/g, ""),
       status: "pending",
-      provider: hasMomoKeys() ? "mtn_momo" : "sandbox_mock",
+      provider: isMomoProduction() ? "mtn_momo" : "sandbox_mock",
       idempotency_key: idempotencyKey,
       quote_path_id: path.id,
     })

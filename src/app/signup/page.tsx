@@ -49,7 +49,7 @@ export default function SignupPage() {
       // If email confirmation is required, there is no session yet.
       if (!data.session) {
         setInfo(
-          "Account created. Check your email to confirm, then sign in. (For local demo, you can disable Confirm email in Supabase Auth settings.)"
+          "Account created. Check your email to confirm, then sign in. (For local development, you can disable Confirm email in Supabase Auth settings.)"
         );
         return;
       }
@@ -79,7 +79,7 @@ export default function SignupPage() {
             Create account
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Demo signup for ClearSend sandbox transfers (NGN / GHS / XOF).
+            Create an account to send across NGN, GHS, and XOF corridors.
           </p>
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div>

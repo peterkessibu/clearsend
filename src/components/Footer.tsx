@@ -10,12 +10,13 @@ export function Footer() {
             <span className="font-semibold text-white">ClearSend</span>
           </div>
           <p className="mt-2 max-w-sm text-sm text-slate-400">
-            All-in FX + fee transparency for West Africa. Demo for MoMo Fintech
-            Labs. No fund holding.
+            All-in FX + fee transparency for West Africa. ClearSend does not
+            hold funds.
           </p>
         </div>
         <p className="text-xs text-slate-500">
-          © {new Date().getFullYear()} ClearSend · DEMO quotes only
+          © {new Date().getFullYear()} ClearSend · Estimated quotes · No fund
+          holding
         </p>
       </div>
     </footer>

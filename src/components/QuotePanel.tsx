@@ -39,7 +39,7 @@ export function QuotePanel() {
       return;
     }
     setLoading(true);
-    // Tiny delay so the DEMO feel is intentional / timestamp refreshes
+    // Brief delay so the quote timestamp refreshes cleanly
     window.setTimeout(() => {
       try {
         const quote = generateQuotes(corridorId, amount);
@@ -60,7 +60,7 @@ export function QuotePanel() {
   function onMomoCta(pathId: string) {
     const path = result?.paths.find((p) => p.id === pathId);
     setMomoNotice(
-      `Demo soft handoff: “${path?.provider ?? "path"}” would open MoMo receive for ${result?.corridor.toCountry ?? "the destination"}. No funds move in this demo — ClearSend never holds balances.`
+      `MoMo soft handoff: “${path?.provider ?? "path"}” would open MoMo receive for ${result?.corridor.toCountry ?? "the destination"}. ClearSend never holds balances.`
     );
   }
 
@@ -71,16 +71,15 @@ export function QuotePanel() {
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-wider text-teal-700">
-            DEMO quotes
+            All-in quotes
           </p>
           <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             Compare corridors in one step
           </h2>
           <p className="mt-3 text-slate-600">
             Pick a West Africa corridor, enter an amount, and see ranked
-            all-in paths. Every result is stamped{" "}
-            <span className="font-semibold text-amber-700">DEMO</span> —
-            indicative only, not executable market data.
+            all-in paths. Quotes are <span className="font-semibold text-slate-800">estimated</span>{" "}
+            from the ClearSend model until a live FX feed is connected.
           </p>
         </div>
 
@@ -139,7 +138,7 @@ export function QuotePanel() {
               disabled={loading}
               className="inline-flex w-full items-center justify-center rounded-xl bg-teal-700 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
             >
-              {loading ? "Generating DEMO quote…" : "Get DEMO quote"}
+              {loading ? "Generating quote…" : "Get all-in quote"}
             </button>
           </form>
 

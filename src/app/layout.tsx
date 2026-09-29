@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "ClearSend — West Africa FX + fee transparency",
   description:
-    "Demo: all-in FX and fee transparency for NGN, GHS, and CFA/XOF corridors with soft MoMo receive handoff. PAPSS-aligned narrative. DEMO quotes only — no fund holding.",
+    "All-in FX and fee transparency for NGN, GHS, and CFA/XOF corridors with soft MoMo receive handoff. PAPSS-aligned narrative. ClearSend does not hold funds.",
   applicationName: "ClearSend",
   icons: { icon: "/favicon.svg" },
   authors: [{ name: "ClearSend" }],

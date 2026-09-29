@@ -1,9 +1,20 @@
 import { getCurrentUser } from "@/lib/auth";
-import { hasMomoKeys } from "@/lib/momo";
+import { hasMomoKeys, isMomoProduction } from "@/lib/momo";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
-  const momoConfigured = hasMomoKeys();
+  const keysPresent = hasMomoKeys();
+  const liveMomo = isMomoProduction();
+  const targetEnv = process.env.MOMO_TARGET_ENV?.trim() || "sandbox";
+
+  let momoStatus: string;
+  if (liveMomo) {
+    momoStatus = "Production MoMo API configured";
+  } else if (keysPresent) {
+    momoStatus = `Keys present · target ${targetEnv} → SandboxMockProvider (set MOMO_TARGET_ENV=production for live API)`;
+  } else {
+    momoStatus = "Using SandboxMockProvider (set MoMo keys + MOMO_TARGET_ENV=production for live API)";
+  }
 
   return (
     <div className="mx-auto max-w-lg space-y-6">
@@ -12,7 +23,7 @@ export default async function SettingsPage() {
           Settings
         </h1>
         <p className="mt-1 text-sm text-slate-600">
-          Account stub — profile editing and KYC coming later.
+          Account profile. KYC and editing coming later.
         </p>
       </div>
 
@@ -22,7 +33,7 @@ export default async function SettingsPage() {
             Name
           </div>
           <div className="mt-1 text-sm font-medium text-slate-900">
-{user?.name}
+            {user?.name}
           </div>
         </div>
         <div>
@@ -30,7 +41,7 @@ export default async function SettingsPage() {
             Email
           </div>
           <div className="mt-1 text-sm font-medium text-slate-900">
-{user?.email}
+            {user?.email}
           </div>
         </div>
         <div>
@@ -38,13 +49,11 @@ export default async function SettingsPage() {
             MoMo API
           </div>
           <div className="mt-1 text-sm font-medium text-slate-900">
-            {momoConfigured
-              ? `Configured (${process.env.MOMO_TARGET_ENV || "sandbox"})`
-              : "Not configured — using SandboxMockProvider"}
+            {momoStatus}
           </div>
           <p className="mt-1 text-xs text-slate-500">
-            Set MOMO_API_USER, MOMO_API_KEY, MOMO_SUBSCRIPTION_KEY to enable the
-            real client hook points. Never claim live settlement without keys.
+            Live MoMo requires MOMO_API_USER, MOMO_API_KEY, MOMO_SUBSCRIPTION_KEY
+            and MOMO_TARGET_ENV=production. ClearSend does not hold funds.
           </p>
         </div>
       </div>

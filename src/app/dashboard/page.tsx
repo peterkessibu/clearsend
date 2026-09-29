@@ -12,7 +12,7 @@ export default async function DashboardOverviewPage() {
     ? await listTransfersForUser(user.id, 5)
     : [];
 
-  const demoBalances: { currency: Currency; amount: number }[] = [
+  const balances: { currency: Currency; amount: number }[] = [
     { currency: "NGN", amount: 1_250_000 },
     { currency: "GHS", amount: 8_500 },
     { currency: "XOF", amount: 750_000 },
@@ -26,8 +26,8 @@ export default async function DashboardOverviewPage() {
             Overview
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Welcome{user?.name ? `, ${user.name}` : ""}. Sandbox
-            balances below are illustrative DEMO labels only.
+            Welcome{user?.name ? `, ${user.name}` : ""}. Corridor
+            balances below are display estimates — ClearSend does not hold funds.
           </p>
         </div>
         <Link
@@ -43,12 +43,12 @@ export default async function DashboardOverviewPage() {
           <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
             Balances
           </h2>
-          <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-[11px] font-semibold text-teal-800 ring-1 ring-teal-200">
-            DEMO / sandbox
+          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-700 ring-1 ring-slate-200">
+            No custody
           </span>
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
-          {demoBalances.map((b) => (
+          {balances.map((b) => (
             <div
               key={b.currency}
               className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -59,8 +59,8 @@ export default async function DashboardOverviewPage() {
               <div className="mt-1 text-xl font-bold text-slate-900">
                 {formatMoney(b.amount, b.currency)}
               </div>
-              <div className="mt-2 text-[11px] text-amber-700">
-                Not a real wallet balance
+              <div className="mt-2 text-[11px] text-slate-500">
+                Display only — ClearSend does not hold funds
               </div>
             </div>
           ))}
@@ -86,7 +86,7 @@ export default async function DashboardOverviewPage() {
               href="/dashboard/send"
               className="mt-3 inline-flex text-sm font-semibold text-teal-700 hover:underline"
             >
-              Send your first DEMO transfer →
+              Send your first transfer →
             </Link>
           </div>
         ) : (

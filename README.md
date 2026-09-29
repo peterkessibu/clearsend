@@ -1,32 +1,32 @@
-# ClearSend — West Africa FX + fee transparency (demo)
+# ClearSend — West Africa FX + fee transparency
 
-**ClearSend** is a pitch / product demo for **MoMo Fintech Labs**: all-in FX and fee transparency across West Africa corridors (**NGN**, **GHS**, **CFA/XOF**), with ranked quote paths, authenticated dashboard, and a **sandbox send-money** flow wired for MTN MoMo Open API.
+**ClearSend** is a production-oriented app for **MoMo API** corridors: all-in FX and fee transparency across West Africa (**NGN**, **GHS**, **CFA/XOF**), with ranked quote paths, authenticated dashboard, and a send-money flow wired for the MTN MoMo Open API.
 
-> **This is a demo.** Quotes are synthetic, timestamped **DEMO**, and not live market data. ClearSend does **not** claim live PAPSS connectivity and does **not** hold funds. Transfers use **SandboxMockProvider** unless real MoMo keys are configured — never treat sandbox stubs as live settlement.
+> ClearSend does **not** claim live PAPSS connectivity and does **not** hold funds. Quotes are **estimated** all-in amounts from the quote model until a live FX feed is connected. MoMo uses **SandboxMockProvider** when keys are missing or `MOMO_TARGET_ENV=sandbox`; set live keys and `MOMO_TARGET_ENV=production` for the real MoMo provider.
 
-## What it shows
+## What it includes
 
 1. **Landing** — problem / solution framing + Login / Get started  
 2. **Auth** — email/password signup & login via **Supabase Auth**  
-3. **Dashboard** — DEMO balances, recent transfers, Send / Transfers / Settings  
+3. **Dashboard** — corridor balances (display only), recent transfers, Send / Transfers / Settings  
 4. **Send flow** — corridor picker → amount + MoMo MSISDN → all-in quote review → confirm → receipt  
-5. **MoMo layer** — Collection + Disbursement interfaces with mock + real hook points  
-6. **Quote engine** — ranked DEMO paths (NGN↔GHS, GHS↔XOF, etc.)
+5. **MoMo layer** — Collection + Disbursement interfaces with sandbox mock + production provider  
+6. **Quote engine** — ranked estimated paths (NGN↔GHS, GHS↔XOF, etc.)
 
-## Demo limits (read this)
+## Product notes
 
-- Quotes are **indicative DEMO only**.
-- **No live PAPSS**, and **no live MoMo settlement** unless you supply approved sandbox/production keys.
-- Without MoMo env keys, payouts are simulated (`sandbox_completed`) with latency + idempotency.
-- **No fund holding**, custody, or full KYC — demo auth only.
-- FX mids and fee models in `src/lib/quotes.ts` are hardcoded for storytelling.
+- Quotes are **estimated** (model-based) until a live FX feed exists.  
+- **No live PAPSS** connectivity is claimed; narratives are PAPSS-aligned only.  
+- ClearSend does **not** hold funds, provide custody, or act as a licensed MTO.  
+- Without MoMo production keys + `MOMO_TARGET_ENV=production`, payouts use `SandboxMockProvider` (`sandbox_completed`) with latency + idempotency.  
+- FX mids and fee models live in `src/lib/quotes.ts`.
 
 ## Stack
 
 - Next.js 15 (App Router) + TypeScript + Tailwind CSS v4  
 - **Supabase Auth** + **Supabase Postgres** (`profiles`, `transfers` with RLS)  
 - `@supabase/ssr` cookie session refresh via middleware  
-- MTN MoMo client stubs under `src/lib/momo/`  
+- MTN MoMo client under `src/lib/momo/`  
 - Node.js **22+** recommended (`@supabase/supabase-js` engine requirement)
 
 ## Run locally
@@ -43,10 +43,10 @@ Open [http://localhost:3000](http://localhost:3000).
 
 1. **Get started** → create an account (profile row is created by a Supabase trigger from `user_metadata.name`)  
 2. Open **Send** → pick a corridor, amount, recipient MSISDN (e.g. `+233241234567`)  
-3. Confirm → see receipt with status `sandbox_completed`  
+3. Confirm → see receipt (sandbox status when not on production MoMo)  
 4. Check **Transfers** and **Overview**
 
-If **Confirm email** is enabled in Supabase Auth, signup will ask you to confirm before a session is issued. For a frictionless local demo, turn off **Confirm email** under Authentication → Providers → Email.
+If **Confirm email** is enabled in Supabase Auth, signup will ask you to confirm before a session is issued. For frictionless local development, turn off **Confirm email** under Authentication → Providers → Email.
 
 ### Production build
 
@@ -64,14 +64,12 @@ See **`.env.example`** for the full list.
 |----------|----------|---------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon / publishable key (RLS-enforced) |
-| `MOMO_API_USER` | MoMo | API user UUID from MoMo Developer portal |
-| `MOMO_API_KEY` | MoMo | API key for that user |
-| `MOMO_SUBSCRIPTION_KEY` | MoMo | Primary subscription key (Collection/Disbursement product) |
+| `MOMO_API_USER` | For live MoMo | API user UUID from MoMo Developer portal |
+| `MOMO_API_KEY` | For live MoMo | API key for that user |
+| `MOMO_SUBSCRIPTION_KEY` | For live MoMo | Primary subscription key (Collection/Disbursement product) |
 | `MOMO_TARGET_ENV` | MoMo | `sandbox` (default) or `production` |
 | `MOMO_CALLBACK_URL` | Optional | Async callback URL for MoMo |
 | `MOMO_BASE_URL` | Optional | Override API host |
-
-If MoMo keys are **missing**, `getMomoClient()` returns **SandboxMockProvider**.
 
 `AUTH_SECRET` / `DATABASE_URL` / Prisma are **no longer used**.
 
@@ -79,8 +77,9 @@ If MoMo keys are **missing**, `getMomoClient()` returns **SandboxMockProvider**.
 
 Set these project env vars (Production + Preview as needed):
 
-- `NEXT_PUBLIC_SUPABASE_URL` = `https://drdxmfshvjpaurocwfgy.supabase.co` (or your project URL)
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` = your anon key
+- `NEXT_PUBLIC_SUPABASE_URL` = your Supabase project URL  
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` = your anon key  
+- For live MoMo: `MOMO_API_USER`, `MOMO_API_KEY`, `MOMO_SUBSCRIPTION_KEY`, and `MOMO_TARGET_ENV=production` (never commit secrets)
 
 In **Supabase → Authentication → URL configuration**:
 
@@ -97,24 +96,24 @@ In **Supabase → Authentication → URL configuration**:
 - **Storage:** `auth.users` + `public.profiles` (trigger on signup copies `name` from metadata).  
 - **Data:** `public.transfers` queried with the user session (RLS).  
 
-## Sandbox vs live MoMo
+## Sandbox vs production MoMo
 
 | Mode | When | Behaviour |
 |------|------|-----------|
-| **Sandbox stub** | Any of `MOMO_API_USER` / `MOMO_API_KEY` / `MOMO_SUBSCRIPTION_KEY` missing | `SandboxMockProvider` simulates Collection/Disbursement with ~0.4–1.2s latency and idempotency keys. Status → `sandbox_completed` or `failed`. |
-| **MoMo API** | All three keys set | `RealMtnMomoProvider` calls MTN Open API token + requesttopay / transfer endpoints. Still respect `MOMO_TARGET_ENV`. |
+| **Sandbox mock** | Any of `MOMO_API_USER` / `MOMO_API_KEY` / `MOMO_SUBSCRIPTION_KEY` missing **or** `MOMO_TARGET_ENV=sandbox` | `SandboxMockProvider` simulates Collection/Disbursement with ~0.4–1.2s latency and idempotency keys. Status → `sandbox_completed` or `failed`. |
+| **Production MoMo** | All three keys set **and** `MOMO_TARGET_ENV=production` | `RealMtnMomoProvider` calls MTN Open API (`https://proxy.momoapi.mtn.com` unless `MOMO_BASE_URL` overrides). |
 
-**UI always banners DEMO/sandbox** when using the mock. Do not claim live settlement without keys and product approval.
+Do not treat sandbox stubs as live settlement. ClearSend is not a licensed MTO and does not hold customer funds.
 
-### How to get MTN MoMo sandbox keys
+### How to get MTN MoMo keys
 
 1. Create an account at the [MoMo Developer portal](https://momodeveloper.mtn.com/).  
-2. Subscribe to **Collection** and/or **Disbursement** (sandbox) products — note the **Primary Key** → `MOMO_SUBSCRIPTION_KEY`.  
+2. Subscribe to **Collection** and/or **Disbursement** products — note the **Primary Key** → `MOMO_SUBSCRIPTION_KEY`.  
 3. Create an **API User** (`POST /v1_0/apiuser` with `X-Reference-Id` UUID) → `MOMO_API_USER`.  
 4. Create an **API Key** for that user (`POST /v1_0/apiuser/{id}/apikey`) → `MOMO_API_KEY`.  
 5. Obtain OAuth tokens via `/collection/token/` or `/disbursement/token/` (Basic auth = user:key).  
-6. **Ghana Remittance** is partner-gated — contact MTN for access; Collection/Disbursement sandbox is typically available for Ghana/Zambia variants on the portal.  
-7. Set `MOMO_TARGET_ENV=sandbox` and optional `MOMO_CALLBACK_URL`.
+6. **Ghana Remittance** is partner-gated — contact MTN for access.  
+7. For live payouts set `MOMO_TARGET_ENV=production` plus the three keys (and optional `MOMO_CALLBACK_URL`). Keep secrets out of git.
 
 Code entry points: `src/lib/momo/` (`index.ts`, `mock.ts`, `real.ts`, `types.ts`).
 
@@ -125,7 +124,7 @@ src/
   app/                 # App Router (landing, auth, dashboard, APIs)
   components/          # Landing + dashboard UI
   lib/
-    quotes.ts          # DEMO quote engine
+    quotes.ts          # Estimated all-in quote engine
     corridors.ts
     momo/              # MoMo Collection + Disbursement clients
     transfers.ts       # Create/execute transfer records (Supabase)
@@ -134,12 +133,12 @@ src/
   middleware.ts        # Protect /dashboard/* + refresh session
 ```
 
-## Product notes for pitches
+## Positioning
 
-- Position ClearSend as **transparency + ranking + sandbox remittance UX**, not a licensed wallet.  
+- Position ClearSend as **transparency + ranking + MoMo remittance UX**, not a licensed wallet or MTO.  
 - Emphasize **PAPSS-aligned** regional clearing *intent* without claiming live PAPSS.  
-- Highlight **MoMo soft handoff / disbursement stubs** after a clear all-in quote.
+- Highlight **MoMo soft handoff / disbursement** after a clear all-in quote.
 
 ---
 
-© ClearSend · Demo for MoMo Fintech Labs stakeholders
+© ClearSend · MoMo-ready FX transparency for West Africa

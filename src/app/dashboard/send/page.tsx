@@ -94,7 +94,7 @@ export default function SendMoneyPage() {
           Send money
         </h1>
         <p className="mt-1 text-sm text-slate-600">
-          West Africa corridors · DEMO all-in quote · MoMo sandbox payout stub
+          West Africa corridors · estimated all-in quote · MoMo payout
         </p>
       </div>
 
@@ -191,7 +191,7 @@ export default function SendMoneyPage() {
 
           {path && quote && (
             <div className="rounded-xl bg-teal-50 px-3 py-3 text-sm text-teal-900">
-              <div className="font-semibold">Indicative all-in (DEMO)</div>
+              <div className="font-semibold">Estimated all-in quote</div>
               <div className="mt-1">
                 Recipient gets{" "}
                 <span className="font-bold">
@@ -265,9 +265,10 @@ export default function SendMoneyPage() {
             </div>
           </dl>
 
-          <p className="rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-900">
-            Confirming creates a pending transfer, then calls the MoMo client
-            (SandboxMockProvider if no keys). This is DEMO — not live settlement.
+          <p className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
+            Confirming creates a pending transfer, then calls the MoMo client.
+            Sandbox mock is used until production keys and MOMO_TARGET_ENV=production
+            are set. ClearSend does not hold funds.
           </p>
 
           {error && (
@@ -301,7 +302,7 @@ export default function SendMoneyPage() {
           <p className="mt-4 text-sm font-medium text-slate-700">
             Creating transfer &amp; calling MoMo client…
           </p>
-          <p className="mt-1 text-xs text-slate-500">Sandbox stub may take ~1s</p>
+          <p className="mt-1 text-xs text-slate-500">Payout may take a moment to confirm</p>
         </div>
       )}
     </div>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { listTransfersForUser } from "@/lib/transfers";
-import { formatMoney, formatDemoTimestamp } from "@/lib/format";
+import { formatMoney, formatQuoteTimestamp } from "@/lib/format";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { getCorridor } from "@/lib/corridors";
 import type { CorridorId, Currency } from "@/types";
@@ -20,8 +20,8 @@ export default async function TransfersPage() {
             Transfers
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Your sandbox transfer history. Statuses never imply live settlement
-            without MoMo keys.
+            Your transfer history. Production MoMo settlement requires live keys
+            and MOMO_TARGET_ENV=production.
           </p>
         </div>
         <Link
@@ -64,7 +64,7 @@ export default async function TransfersPage() {
                         href={`/dashboard/transfers/${t.id}`}
                         className="font-medium text-teal-700 hover:underline"
                       >
-                        {formatDemoTimestamp(t.createdAt.toISOString())}
+                        {formatQuoteTimestamp(t.createdAt.toISOString())}
                       </Link>
                     </td>
                     <td className="px-4 py-3 text-slate-800">{corridorLabel}</td>
