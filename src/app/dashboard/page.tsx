@@ -20,27 +20,19 @@ export default async function DashboardOverviewPage() {
   return (
     <div className="space-y-8">
       <section className="overflow-hidden rounded-3xl border border-teal-800/10 bg-gradient-to-br from-teal-800 via-teal-700 to-emerald-600 p-5 text-white shadow-lg shadow-teal-900/15 sm:p-7">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-100/90">
-              Overview
-            </p>
-            <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-              Welcome{firstName ? `, ${firstName}` : ""}
-            </h1>
-            <p className="mt-2 text-sm leading-relaxed text-teal-50/90">
-              All-in FX clarity for West Africa corridors. Balances start at
-              zero — use Load wallet for a sandbox top-up, then Exchange or
-              Send. ClearSend does not hold funds as a licensed MTO.
-            </p>
-          </div>
-          <Link
-            href="/dashboard/send"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-teal-900 shadow-sm transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-teal-700"
-          >
-            Send money
-            <span aria-hidden>→</span>
-          </Link>
+        <div className="max-w-xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-100/90">
+            Overview
+          </p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+            Welcome{firstName ? `, ${firstName}` : ""}
+          </h1>
+          <p className="mt-2 text-sm leading-relaxed text-teal-50/90">
+            All-in FX clarity for West Africa corridors. Balances start at zero
+            — use Load wallet for a sandbox top-up, then Exchange or Transfer
+            from the balance panel. ClearSend does not hold funds as a licensed
+            MTO.
+          </p>
         </div>
       </section>
 
@@ -85,7 +77,7 @@ export default async function DashboardOverviewPage() {
             </p>
             <Link
               href="/dashboard/send"
-              className="mt-4 inline-flex rounded-full bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+              className="mt-4 inline-flex rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-emerald-700/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
             >
               Send your first transfer
             </Link>
