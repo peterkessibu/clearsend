@@ -11,8 +11,10 @@ import {
   type WalletExchangeQuote,
 } from "@/lib/wallet-model";
 import type { Currency } from "@/types";
+import { Modal } from "@/components/dashboard/Modal";
+import { SendMoneyForm } from "@/components/dashboard/SendMoneyForm";
 
-type PanelMode = "idle" | "load" | "exchange";
+type PanelMode = "idle" | "load" | "exchange" | "transfer";
 
 export function WalletPanel({
   initialBalances,
@@ -62,6 +64,13 @@ export function WalletPanel({
     setSuccess(null);
     setQuote(null);
     setMode("exchange");
+  }
+
+  function openTransfer() {
+    setError(null);
+    setSuccess(null);
+    setQuote(null);
+    setMode("transfer");
   }
 
   function closePanel() {
@@ -204,19 +213,29 @@ export function WalletPanel({
           <span className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 ring-1 ring-slate-200">
             Sandbox wallet
           </span>
+          {/* Primary — Load wallet */}
           <button
             type="button"
             onClick={openLoad}
-            className="rounded-full bg-teal-700 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+            className="rounded-full bg-teal-700 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm shadow-teal-700/25 transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
           >
             Load wallet
           </button>
+          {/* Secondary outline — Exchange */}
           <button
             type="button"
             onClick={openExchange}
-            className="rounded-full border border-teal-700/30 bg-white px-3.5 py-1.5 text-xs font-semibold text-teal-800 shadow-sm transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+            className="rounded-full border-2 border-teal-700 bg-white px-3.5 py-1.5 text-xs font-semibold text-teal-800 shadow-sm transition hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
           >
             Exchange
+          </button>
+          {/* Accent — Transfer */}
+          <button
+            type="button"
+            onClick={openTransfer}
+            className="rounded-full bg-emerald-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm shadow-emerald-700/25 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+          >
+            Transfer
           </button>
         </div>
       </div>
@@ -245,7 +264,7 @@ export function WalletPanel({
         ))}
       </div>
 
-      {(error || success) && (
+      {(error || success) && mode === "idle" && (
         <div
           className={`mt-3 rounded-xl px-3.5 py-2.5 text-sm ${
             error
@@ -258,31 +277,22 @@ export function WalletPanel({
         </div>
       )}
 
-      {mode === "load" && (
-        <form
-          onSubmit={submitLoad}
-          className="mt-4 rounded-2xl border border-teal-800/10 bg-white p-4 shadow-sm shadow-slate-900/5 sm:p-5"
-        >
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                Load wallet
-              </h3>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                Sandbox top-up for this MVP UI. ClearSend does not hold customer
-                funds as a licensed MTO — use this to try FX and send flows.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={closePanel}
-              className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-500 hover:bg-slate-100"
-            >
-              Close
-            </button>
+      <Modal
+        open={mode === "load"}
+        onClose={closePanel}
+        title="Load wallet"
+        description="Sandbox top-up for this MVP UI. ClearSend does not hold customer funds as a licensed MTO — use this to try FX and send flows."
+      >
+        {error && (
+          <div
+            className="mb-3 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-800"
+            role="alert"
+          >
+            {error}
           </div>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        )}
+        <form onSubmit={submitLoad} className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-xs font-semibold text-slate-700">
               Currency
               <select
@@ -313,7 +323,7 @@ export function WalletPanel({
             </label>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               type="submit"
               disabled={busy}
@@ -330,151 +340,159 @@ export function WalletPanel({
             </button>
           </div>
         </form>
-      )}
+      </Modal>
 
-      {mode === "exchange" && (
-        <div className="mt-4 rounded-2xl border border-teal-800/10 bg-white p-4 shadow-sm shadow-slate-900/5 sm:p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                Exchange currencies
-              </h3>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                Wallet FX within ClearSend using estimated all-in quotes — not a
-                licensed money transfer claim.
+      <Modal
+        open={mode === "exchange"}
+        onClose={closePanel}
+        title="Exchange currencies"
+        description="Wallet FX within ClearSend using estimated all-in quotes — not a licensed money transfer claim."
+        size="lg"
+      >
+        {error && (
+          <div
+            className="mb-3 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-800"
+            role="alert"
+          >
+            {error}
+          </div>
+        )}
+        {!quote ? (
+          <form onSubmit={previewExchange} className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <label className="block text-xs font-semibold text-slate-700">
+                From
+                <select
+                  className={fieldClass}
+                  value={fromCurrency}
+                  onChange={(e) => onFromChange(e.target.value as Currency)}
+                >
+                  {WALLET_CURRENCIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c} ({formatMoney(balances[c], c)})
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block text-xs font-semibold text-slate-700">
+                To
+                <select
+                  className={fieldClass}
+                  value={toCurrency}
+                  onChange={(e) => {
+                    setToCurrency(e.target.value as Currency);
+                    setQuote(null);
+                  }}
+                >
+                  {toOptions.map((c) => (
+                    <option key={c} value={c}>
+                      {c} — {CURRENCY_META[c].name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block text-xs font-semibold text-slate-700">
+                Amount ({fromCurrency})
+                <input
+                  type="number"
+                  min="1"
+                  step="any"
+                  required
+                  className={fieldClass}
+                  value={exchangeAmount}
+                  onChange={(e) => {
+                    setExchangeAmount(e.target.value);
+                    setQuote(null);
+                  }}
+                />
+              </label>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="submit"
+                disabled={busy}
+                className="inline-flex rounded-full border-2 border-teal-700 bg-white px-4 py-2 text-sm font-semibold text-teal-800 transition hover:bg-teal-50 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+              >
+                {busy ? "Estimating…" : "Get all-in estimate"}
+              </button>
+              <button
+                type="button"
+                onClick={closePanel}
+                className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="space-y-3">
+            <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 text-sm">
+              <div className="flex justify-between gap-2">
+                <span className="text-slate-600">You send</span>
+                <span className="font-semibold text-slate-900">
+                  {formatMoney(quote.amountIn, quote.from)}
+                </span>
+              </div>
+              <div className="mt-1.5 flex justify-between gap-2">
+                <span className="text-slate-600">Fee (est.)</span>
+                <span className="font-medium text-slate-800">
+                  {formatMoney(quote.fee, quote.feeCurrency)}
+                </span>
+              </div>
+              <div className="mt-1.5 flex justify-between gap-2">
+                <span className="text-slate-600">FX rate</span>
+                <span className="font-medium text-slate-800">
+                  {formatRate(quote.fxRate, quote.from, quote.to)}
+                </span>
+              </div>
+              <div className="mt-2 flex justify-between gap-2 border-t border-slate-200 pt-2">
+                <span className="font-semibold text-teal-800">You receive</span>
+                <span className="font-bold text-teal-900">
+                  {formatMoney(quote.amountOut, quote.to)}
+                </span>
+              </div>
+              <p className="mt-2 text-[11px] text-slate-500">
+                Via {quote.provider}
+                {quote.corridorId ? ` · ${quote.corridorId}` : ""} — estimated
+                all-in
               </p>
             </div>
-            <button
-              type="button"
-              onClick={closePanel}
-              className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-500 hover:bg-slate-100"
-            >
-              Close
-            </button>
-          </div>
-
-          {!quote ? (
-            <form onSubmit={previewExchange} className="mt-4 space-y-3">
-              <div className="grid gap-3 sm:grid-cols-3">
-                <label className="block text-xs font-semibold text-slate-700">
-                  From
-                  <select
-                    className={fieldClass}
-                    value={fromCurrency}
-                    onChange={(e) => onFromChange(e.target.value as Currency)}
-                  >
-                    {WALLET_CURRENCIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c} ({formatMoney(balances[c], c)})
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="block text-xs font-semibold text-slate-700">
-                  To
-                  <select
-                    className={fieldClass}
-                    value={toCurrency}
-                    onChange={(e) => {
-                      setToCurrency(e.target.value as Currency);
-                      setQuote(null);
-                    }}
-                  >
-                    {toOptions.map((c) => (
-                      <option key={c} value={c}>
-                        {c} — {CURRENCY_META[c].name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="block text-xs font-semibold text-slate-700">
-                  Amount ({fromCurrency})
-                  <input
-                    type="number"
-                    min="1"
-                    step="any"
-                    required
-                    className={fieldClass}
-                    value={exchangeAmount}
-                    onChange={(e) => {
-                      setExchangeAmount(e.target.value);
-                      setQuote(null);
-                    }}
-                  />
-                </label>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="submit"
-                  disabled={busy}
-                  className="inline-flex rounded-full bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
-                >
-                  {busy ? "Estimating…" : "Get all-in estimate"}
-                </button>
-                <button
-                  type="button"
-                  onClick={closePanel}
-                  className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div className="mt-4 space-y-3">
-              <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 text-sm">
-                <div className="flex justify-between gap-2">
-                  <span className="text-slate-600">You send</span>
-                  <span className="font-semibold text-slate-900">
-                    {formatMoney(quote.amountIn, quote.from)}
-                  </span>
-                </div>
-                <div className="mt-1.5 flex justify-between gap-2">
-                  <span className="text-slate-600">Fee (est.)</span>
-                  <span className="font-medium text-slate-800">
-                    {formatMoney(quote.fee, quote.feeCurrency)}
-                  </span>
-                </div>
-                <div className="mt-1.5 flex justify-between gap-2">
-                  <span className="text-slate-600">FX rate</span>
-                  <span className="font-medium text-slate-800">
-                    {formatRate(quote.fxRate, quote.from, quote.to)}
-                  </span>
-                </div>
-                <div className="mt-2 flex justify-between gap-2 border-t border-slate-200 pt-2">
-                  <span className="font-semibold text-teal-800">You receive</span>
-                  <span className="font-bold text-teal-900">
-                    {formatMoney(quote.amountOut, quote.to)}
-                  </span>
-                </div>
-                <p className="mt-2 text-[11px] text-slate-500">
-                  Via {quote.provider}
-                  {quote.corridorId ? ` · ${quote.corridorId}` : ""} — estimated
-                  all-in
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={confirmExchange}
-                  className="inline-flex rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
-                >
-                  {busy ? "Exchanging…" : "Confirm exchange"}
-                </button>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => setQuote(null)}
-                  className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                >
-                  Back
-                </button>
-              </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={confirmExchange}
+                className="inline-flex rounded-full bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+              >
+                {busy ? "Exchanging…" : "Confirm exchange"}
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => setQuote(null)}
+                className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Back
+              </button>
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        open={mode === "transfer"}
+        onClose={closePanel}
+        title="Transfer"
+        description="West Africa corridors · estimated all-in quote · MoMo payout"
+        size="lg"
+      >
+        <SendMoneyForm
+          embedded
+          onCreated={() => {
+            setMode("idle");
+          }}
+        />
+      </Modal>
     </section>
   );
 }
