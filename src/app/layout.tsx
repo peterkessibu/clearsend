@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description:
     "Demo: all-in FX and fee transparency for NGN, GHS, and CFA/XOF corridors with soft MoMo receive handoff. PAPSS-aligned narrative. DEMO quotes only — no fund holding.",
   applicationName: "ClearSend",
+  icons: { icon: "/favicon.svg" },
   authors: [{ name: "ClearSend" }],
   keywords: [
     "ClearSend",
