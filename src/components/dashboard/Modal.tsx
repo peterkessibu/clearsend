@@ -89,7 +89,14 @@ export function Modal({
   const maxW = size === "lg" ? "max-w-lg" : "max-w-md";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
+    <div
+      className={[
+        // Above DashboardShell bottom nav (z-50); lift sheet clear of tab bar on mobile
+        "fixed inset-0 z-[60] flex items-end justify-center",
+        "pb-[calc(5rem+env(safe-area-inset-bottom,0px))]",
+        "sm:items-center sm:p-4",
+      ].join(" ")}
+    >
       <button
         type="button"
         aria-label="Close dialog"
@@ -103,7 +110,7 @@ export function Modal({
         aria-labelledby={titleId}
         aria-describedby={description ? descId : undefined}
         tabIndex={-1}
-        className={`relative z-10 flex max-h-[min(92dvh,720px)] w-full ${maxW} flex-col rounded-t-3xl border border-teal-900/10 bg-white shadow-2xl shadow-teal-950/20 outline-none sm:rounded-3xl`}
+        className={`relative z-10 flex max-h-[min(calc(100dvh-5.5rem-env(safe-area-inset-bottom,0px)),720px)] w-full ${maxW} flex-col rounded-t-3xl border border-teal-900/10 bg-white shadow-2xl shadow-teal-950/20 outline-none sm:max-h-[min(92dvh,720px)] sm:rounded-3xl`}
       >
         <div className="flex shrink-0 items-start justify-between gap-3 border-b border-slate-100 px-4 py-3.5 sm:px-5">
           <div className="min-w-0 pr-2">
