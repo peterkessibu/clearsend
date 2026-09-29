@@ -37,5 +37,4 @@ export interface QuoteResult {
   currencyOut: Currency;
   paths: QuotePath[];
   generatedAt: string; // ISO
-  demoTag: "DEMO";
 }

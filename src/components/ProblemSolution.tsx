@@ -20,7 +20,7 @@ const solutions = [
   },
   {
     title: "PAPSS-aligned story",
-    body: "Designed around regional clearing intent. This demo does not claim live PAPSS connectivity.",
+    body: "Designed around regional clearing intent. ClearSend does not claim live PAPSS connectivity.",
   },
   {
     title: "MoMo soft handoff",

@@ -21,7 +21,8 @@ export function formatRate(
   return `1 ${fromMeta.symbol.trim()} = ${rate.toFixed(digits)} ${toMeta.symbol.trim()}`;
 }
 
-export function formatDemoTimestamp(iso: string): string {
+/** UTC timestamp for quote / transfer display. */
+export function formatQuoteTimestamp(iso: string): string {
   const d = new Date(iso);
   const stamp = new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
@@ -33,5 +34,5 @@ export function formatDemoTimestamp(iso: string): string {
     hour12: false,
     timeZone: "UTC",
   }).format(d);
-  return `${stamp} UTC · DEMO`;
+  return `${stamp} UTC`;
 }

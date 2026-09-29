@@ -106,7 +106,7 @@ export default function LoginPage() {
             Sign in
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Demo auth via Supabase — sandbox balances only. No live settlement.
+            Sign in to send across NGN, GHS, and XOF corridors. ClearSend does not hold funds.
           </p>
           <div className="mt-6">
             <Suspense fallback={<p className="text-sm text-slate-500">Loading…</p>}>

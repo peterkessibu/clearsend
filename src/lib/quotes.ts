@@ -7,7 +7,7 @@ import type {
   SpeedBand,
 } from "@/types";
 
-/** Indicative mid rates for demo only — not live market data. */
+/** Model mid rates used for estimated all-in quotes until a live FX feed is connected. */
 const MID_RATES: Record<CorridorId, number> = {
   NGN_GHS: 0.0108, // 1 NGN → GHS
   GHS_XOF: 42.5, // 1 GHS → XOF
@@ -42,7 +42,7 @@ const PROVIDERS: ProviderSeed[] = [
     speed: "minutes",
     speedLabel: "~5–15 min",
     momoCompatible: true,
-    notes: "Illustrative PAPSS-style clearing path — not a live PAPSS quote",
+    notes: "PAPSS-aligned clearing path — ClearSend does not claim live PAPSS connectivity",
   },
   {
     id: "momo-rail",
@@ -171,6 +171,5 @@ export function generateQuotes(
     currencyOut: corridor.to,
     paths,
     generatedAt: new Date().toISOString(),
-    demoTag: "DEMO",
   };
 }

@@ -14,7 +14,7 @@ export function Hero() {
       <div className="relative mx-auto max-w-5xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-teal-500/10 px-3 py-1 text-xs font-medium text-teal-100">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          MoMo Fintech Labs pitch demo · DEMO quotes only
+          West Africa corridors · MoMo-ready all-in quotes
         </div>
         <h1 className="max-w-3xl text-3xl font-bold tracking-tight sm:text-5xl sm:leading-[1.1]">
           All-in FX + fee transparency for West Africa corridors
@@ -44,7 +44,7 @@ export function Hero() {
             href="#quote"
             className="inline-flex items-center justify-center rounded-full border border-white/20 bg-transparent px-6 py-3 text-sm font-semibold text-teal-100 transition hover:bg-white/5"
           >
-            Compare demo quotes
+            Compare quotes
           </a>
         </div>
         <dl className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">

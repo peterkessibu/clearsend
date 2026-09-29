@@ -56,10 +56,10 @@ export function HowItWorks() {
           <h3 className="font-semibold text-teal-950">PAPSS-aligned — not live PAPSS</h3>
           <p className="mt-2 text-sm leading-relaxed text-teal-900/80">
             ClearSend&apos;s product story aligns with regional settlement
-            (PAPSS-style) and MoMo receive rails. This demo uses synthetic
-            indicative rates and fee models only. It does{" "}
-            <strong>not</strong> connect to live PAPSS, banks, or MoMo APIs,
-            and it never holds customer funds.
+            (PAPSS-style) and MoMo receive rails. Quotes use an estimated fee
+            and FX model until a live market feed is connected. ClearSend does{" "}
+            <strong>not</strong> claim live PAPSS connectivity and never holds
+            customer funds. MoMo payouts follow the configured provider.
           </p>
         </div>
       </div>

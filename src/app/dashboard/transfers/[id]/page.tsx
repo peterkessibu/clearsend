@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { getTransferForUser } from "@/lib/transfers";
-import { formatMoney, formatDemoTimestamp, formatRate } from "@/lib/format";
+import { formatMoney, formatQuoteTimestamp, formatRate } from "@/lib/format";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { getCorridor } from "@/lib/corridors";
 import type { CorridorId, Currency } from "@/types";
@@ -40,7 +40,7 @@ export default async function TransferReceiptPage({
           <div>
             <h1 className="text-xl font-bold text-slate-900">Receipt</h1>
             <p className="mt-1 text-xs text-slate-500">
-              {formatDemoTimestamp(transfer.createdAt.toISOString())}
+              {formatQuoteTimestamp(transfer.createdAt.toISOString())}
             </p>
           </div>
           <StatusBadge status={transfer.status} />
@@ -107,10 +107,10 @@ export default async function TransferReceiptPage({
           )}
         </dl>
 
-        <p className="mt-6 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-900">
+        <p className="mt-6 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
           {transfer.provider === "sandbox_mock"
-            ? "Executed via SandboxMockProvider — simulated success only. No live MoMo settlement."
-            : "MoMo API path used. Confirm target environment and keys before treating as live."}
+            ? "Executed via sandbox provider. Production MoMo requires live keys and MOMO_TARGET_ENV=production."
+            : "Executed via MoMo API. ClearSend does not hold funds."}
         </p>
       </div>
 

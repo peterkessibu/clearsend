@@ -1,5 +1,5 @@
 import { CURRENCY_META } from "@/lib/corridors";
-import { formatDemoTimestamp, formatMoney, formatRate } from "@/lib/format";
+import { formatQuoteTimestamp, formatMoney, formatRate } from "@/lib/format";
 import type { QuoteResult } from "@/types";
 
 interface Props {
@@ -23,9 +23,9 @@ export function QuoteResults({ result, onMomoCta, momoNotice }: Props) {
             {outMeta.flag} {outMeta.name}
           </p>
         </div>
-        <div className="inline-flex items-center gap-2 self-start rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-          {formatDemoTimestamp(result.generatedAt)}
+        <div className="inline-flex items-center gap-2 self-start rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700">
+          <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
+          Estimated · {formatQuoteTimestamp(result.generatedAt)}
         </div>
       </div>
 
