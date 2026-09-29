@@ -12,7 +12,7 @@ export function QuoteResults({ result, onMomoCta, momoNotice }: Props) {
   const outMeta = CURRENCY_META[result.currencyOut];
 
   return (
-    <div className="mt-6 space-y-4">
+    <div id="quote-results" className="mt-6 space-y-4 scroll-mt-24">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h3 className="text-lg font-bold text-slate-900">

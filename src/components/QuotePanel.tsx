@@ -44,6 +44,11 @@ export function QuotePanel() {
       try {
         const quote = generateQuotes(corridorId, amount);
         setResult(quote);
+        window.setTimeout(() => {
+          document
+            .getElementById("quote-results")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 50);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Quote failed");
       } finally {
@@ -66,7 +71,7 @@ export function QuotePanel() {
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-wider text-teal-700">
-            Live demo quotes
+            DEMO quotes
           </p>
           <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             Compare corridors in one step
