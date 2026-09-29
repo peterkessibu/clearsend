@@ -266,9 +266,8 @@ export default function SendMoneyPage() {
           </dl>
 
           <p className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
-            Confirming creates a pending transfer, then calls the MoMo client.
-            Sandbox mock is used until production keys and MOMO_TARGET_ENV=production
-            are set. ClearSend does not hold funds.
+            Confirming creates a pending transfer and requests a MoMo payout
+            through ClearSend. ClearSend does not hold funds.
           </p>
 
           {error && (

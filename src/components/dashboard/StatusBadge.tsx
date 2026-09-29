@@ -6,7 +6,7 @@ const STYLES: Record<string, string> = {
 
 const LABELS: Record<string, string> = {
   pending: "Pending",
-  sandbox_completed: "Sandbox completed",
+  sandbox_completed: "Completed",
   failed: "Failed",
 };
 
