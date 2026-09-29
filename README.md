@@ -8,7 +8,7 @@
 
 1. **Landing** — problem / solution framing + Login / Get started  
 2. **Auth** — email/password signup & login via **Supabase Auth**  
-3. **Dashboard** — corridor balances (display only), recent transfers, Send / Transfers / Settings  
+3. **Dashboard** — sandbox wallet balances (start at 0; Load wallet + Exchange), recent transfers, Send / Transfers / Settings  
 4. **Send flow** — corridor picker → amount + MoMo MSISDN → all-in quote review → confirm → receipt  
 5. **MoMo layer** — Collection + Disbursement interfaces with sandbox mock + production provider  
 6. **Quote engine** — ranked estimated paths (NGN↔GHS, GHS↔XOF, etc.)
@@ -94,7 +94,7 @@ In **Supabase → Authentication → URL configuration**:
 - **Pages:** `/login`, `/signup`; `/dashboard/*` protected by middleware session refresh.  
 - **Callback:** `/auth/callback` exchanges the email-confirm / PKCE code for a session.  
 - **Storage:** `auth.users` + `public.profiles` (trigger on signup copies `name` from metadata).  
-- **Data:** `public.transfers` queried with the user session (RLS).  
+- **Data:** `public.transfers` and `public.wallet_balances` queried with the user session (RLS). Sandbox top-ups via `wallet_load` / FX via `wallet_exchange`.  
 
 ## Sandbox vs production MoMo
 
@@ -128,6 +128,7 @@ src/
     corridors.ts
     momo/              # MoMo Collection + Disbursement clients
     transfers.ts       # Create/execute transfer records (Supabase)
+    wallet.ts / wallet-model.ts  # Sandbox balances + FX
     auth.ts            # Current user helper
     supabase/          # Browser + server + middleware clients
   middleware.ts        # Protect /dashboard/* + refresh session

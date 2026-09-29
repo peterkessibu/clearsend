@@ -96,9 +96,58 @@ export interface Database {
         };
         Relationships: [];
       };
+      wallet_balances: {
+        Row: {
+          user_id: string;
+          currency: string;
+          amount: number;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          currency: string;
+          amount?: number;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          currency?: string;
+          amount?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      wallet_load: {
+        Args: {
+          p_currency: string;
+          p_amount: number;
+        };
+        Returns: {
+          user_id: string;
+          currency: string;
+          amount: number;
+          updated_at: string;
+        };
+      };
+      wallet_exchange: {
+        Args: {
+          p_from: string;
+          p_to: string;
+          p_amount_in: number;
+          p_amount_out: number;
+          p_fee?: number;
+        };
+        Returns: {
+          from_currency: string;
+          from_amount: number;
+          to_currency: string;
+          to_amount: number;
+        }[];
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
@@ -106,3 +155,5 @@ export interface Database {
 
 export type TransferRow = Database["public"]["Tables"]["transfers"]["Row"];
 export type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
+export type WalletBalanceRow =
+  Database["public"]["Tables"]["wallet_balances"]["Row"];
