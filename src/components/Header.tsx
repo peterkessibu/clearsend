@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 const links = [
@@ -38,12 +39,18 @@ export function Header() {
               {l.label}
             </a>
           ))}
-          <a
-            href="#quote"
+          <Link
+            href="/login"
+            className="text-sm font-semibold text-slate-700 transition hover:text-teal-700"
+          >
+            Login
+          </Link>
+          <Link
+            href="/signup"
             className="rounded-full bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800"
           >
-            Demo quote
-          </a>
+            Get started
+          </Link>
         </nav>
 
         <button
@@ -84,6 +91,20 @@ export function Header() {
                 {l.label}
               </a>
             ))}
+            <Link
+              href="/login"
+              className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              onClick={() => setOpen(false)}
+            >
+              Login
+            </Link>
+            <Link
+              href="/signup"
+              className="mt-1 rounded-full bg-teal-700 px-3 py-2.5 text-center text-sm font-semibold text-white"
+              onClick={() => setOpen(false)}
+            >
+              Get started
+            </Link>
           </div>
         </div>
       )}

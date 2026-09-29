@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function Hero() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-slate-950 via-teal-950 to-teal-900 text-white">
@@ -26,17 +28,23 @@ export function Hero() {
           PAPSS-aligned narrative. No fund holding.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <a
-            href="#quote"
+          <Link
+            href="/signup"
             className="inline-flex items-center justify-center rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-400/20 transition hover:bg-emerald-300"
           >
-            Compare demo quotes
-          </a>
-          <a
-            href="#problem"
+            Get started
+          </Link>
+          <Link
+            href="/login"
             className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
           >
-            Why this matters
+            Login
+          </Link>
+          <a
+            href="#quote"
+            className="inline-flex items-center justify-center rounded-full border border-white/20 bg-transparent px-6 py-3 text-sm font-semibold text-teal-100 transition hover:bg-white/5"
+          >
+            Compare demo quotes
           </a>
         </div>
         <dl className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">

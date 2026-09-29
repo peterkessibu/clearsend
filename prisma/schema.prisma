@@ -1,0 +1,44 @@
+// ClearSend demo schema — SQLite for local; use Postgres (postgresql://...) for Vercel/production.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  transfers    Transfer[]
+}
+
+model Transfer {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  corridorId      String
+  currencyIn      String
+  currencyOut     String
+  amountIn        Float
+  amountOut       Float
+  fee             Float
+  fxRate          Float
+  recipientName   String
+  recipientMsisdn String
+  status          String   // pending | sandbox_completed | failed
+  provider        String   @default("sandbox_mock")
+  idempotencyKey  String   @unique
+  momoReference   String?
+  errorMessage    String?
+  quotePathId     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId, createdAt])
+}
