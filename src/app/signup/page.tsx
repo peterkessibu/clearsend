@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -11,32 +11,49 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    setInfo(null);
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = (await res.json()) as { error?: string };
-      if (!res.ok) {
-        setError(data.error || "Signup failed");
+      const trimmedName = name.trim();
+      const trimmedEmail = email.trim().toLowerCase();
+      if (trimmedName.length < 2) {
+        setError("Name must be at least 2 characters");
         return;
       }
-      const login = await signIn("credentials", {
-        email,
+      if (password.length < 8) {
+        setError("Password must be at least 8 characters");
+        return;
+      }
+
+      const supabase = createClient();
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: trimmedEmail,
         password,
-        redirect: false,
+        options: {
+          data: { name: trimmedName },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
-      if (login?.error) {
-        router.push("/login");
+
+      if (signUpError) {
+        setError(signUpError.message || "Signup failed");
         return;
       }
+
+      // If email confirmation is required, there is no session yet.
+      if (!data.session) {
+        setInfo(
+          "Account created. Check your email to confirm, then sign in. (For local demo, you can disable Confirm email in Supabase Auth settings.)"
+        );
+        return;
+      }
+
       router.push("/dashboard");
       router.refresh();
     } catch {
@@ -116,6 +133,14 @@ export default function SignupPage() {
             {error && (
               <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">
                 {error}
+              </p>
+            )}
+            {info && (
+              <p className="rounded-lg bg-teal-50 px-3 py-2 text-sm text-teal-800">
+                {info}{" "}
+                <Link href="/login" className="font-semibold underline">
+                  Sign in
+                </Link>
               </p>
             )}
             <button

@@ -1,17 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const authError = searchParams.get("error");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    authError === "auth_callback" ? "Could not complete sign-in. Try again." : null
+  );
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: FormEvent) {
@@ -19,13 +22,13 @@ function LoginForm() {
     setError(null);
     setLoading(true);
     try {
-      const res = await signIn("credentials", {
-        email,
+      const supabase = createClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
         password,
-        redirect: false,
       });
-      if (res?.error) {
-        setError("Invalid email or password");
+      if (signInError) {
+        setError(signInError.message || "Invalid email or password");
         return;
       }
       router.push(callbackUrl);
@@ -103,7 +106,7 @@ export default function LoginPage() {
             Sign in
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Demo auth — sandbox balances only. No live settlement.
+            Demo auth via Supabase — sandbox balances only. No live settlement.
           </p>
           <div className="mt-6">
             <Suspense fallback={<p className="text-sm text-slate-500">Loading…</p>}>
