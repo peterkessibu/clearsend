@@ -45,9 +45,7 @@ export function getMomoClient(): MomoProvider {
 }
 
 export function momoModeLabel(provider: MomoProvider): string {
-  return provider.isSandboxStub
-    ? "Sandbox (mock until production keys + MOMO_TARGET_ENV=production)"
-    : `MoMo API (${process.env.MOMO_TARGET_ENV || "production"})`;
+  return provider.isSandboxStub ? "MoMo (non-production)" : "MoMo API";
 }
 
 export function hasMomoKeys(): boolean {

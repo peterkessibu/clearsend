@@ -20,8 +20,7 @@ export default async function TransfersPage() {
             Transfers
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Your transfer history. Production MoMo settlement requires live keys
-            and MOMO_TARGET_ENV=production.
+            Your transfer history. ClearSend does not hold funds.
           </p>
         </div>
         <Link

@@ -6,7 +6,6 @@ import { useState } from "react";
 const links = [
   { href: "#quote", label: "Get quote" },
   { href: "#how", label: "How it works" },
-  { href: "#disclaimer", label: "Disclaimer" },
 ];
 
 export function Header() {

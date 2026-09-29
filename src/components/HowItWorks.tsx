@@ -59,7 +59,7 @@ export function HowItWorks() {
             (PAPSS-style) and MoMo receive rails. Quotes use an estimated fee
             and FX model until a live market feed is connected. ClearSend does{" "}
             <strong>not</strong> claim live PAPSS connectivity and never holds
-            customer funds. MoMo payouts follow the configured provider.
+            customer funds. MoMo payouts are handled by ClearSend.
           </p>
         </div>
       </div>

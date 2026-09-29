@@ -1,20 +1,7 @@
 import { getCurrentUser } from "@/lib/auth";
-import { hasMomoKeys, isMomoProduction } from "@/lib/momo";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
-  const keysPresent = hasMomoKeys();
-  const liveMomo = isMomoProduction();
-  const targetEnv = process.env.MOMO_TARGET_ENV?.trim() || "sandbox";
-
-  let momoStatus: string;
-  if (liveMomo) {
-    momoStatus = "Production MoMo API configured";
-  } else if (keysPresent) {
-    momoStatus = `Keys present · target ${targetEnv} → SandboxMockProvider (set MOMO_TARGET_ENV=production for live API)`;
-  } else {
-    momoStatus = "Using SandboxMockProvider (set MoMo keys + MOMO_TARGET_ENV=production for live API)";
-  }
 
   return (
     <div className="mx-auto max-w-lg space-y-6">
@@ -46,14 +33,14 @@ export default async function SettingsPage() {
         </div>
         <div>
           <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            MoMo API
+            Payouts
           </div>
           <div className="mt-1 text-sm font-medium text-slate-900">
-            {momoStatus}
+            MoMo payouts are operated by ClearSend
           </div>
           <p className="mt-1 text-xs text-slate-500">
-            Live MoMo requires MOMO_API_USER, MOMO_API_KEY, MOMO_SUBSCRIPTION_KEY
-            and MOMO_TARGET_ENV=production. ClearSend does not hold funds.
+            ClearSend does not hold funds. Mobile money is handled through
+            ClearSend&apos;s operator integration for all users.
           </p>
         </div>
       </div>

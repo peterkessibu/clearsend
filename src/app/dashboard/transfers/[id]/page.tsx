@@ -108,9 +108,7 @@ export default async function TransferReceiptPage({
         </dl>
 
         <p className="mt-6 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
-          {transfer.provider === "sandbox_mock"
-            ? "Executed via sandbox provider. Production MoMo requires live keys and MOMO_TARGET_ENV=production."
-            : "Executed via MoMo API. ClearSend does not hold funds."}
+          MoMo payout handled by ClearSend. ClearSend does not hold funds.
         </p>
       </div>
 
