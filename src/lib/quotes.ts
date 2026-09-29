@@ -145,7 +145,7 @@ function buildPath(
 
 function scorePath(p: QuotePath): number {
   // Prefer higher amount out, then speed
-  return p.amountOut * 1000 + speedRank(p.speed) * 10 + (p.momoCompatible ? 5 : 0);
+  return p.amountOut * 1000 + speedRank(p.speed) * 10 + (p.momoCompatible ? 50 : 0);
 }
 
 export function generateQuotes(
